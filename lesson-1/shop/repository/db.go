@@ -10,6 +10,7 @@ type Repository interface {
 	CreateItem(item *models.Item) (*models.Item, error)
 	GetItem(ID int32) (*models.Item, error)
 	DeleteItem(ID int32) error
+	UpdateItem(item *models.Item) (*models.Item, error)
 }
 
 type mapDB struct {
@@ -42,4 +43,13 @@ func (m *mapDB) GetItem(ID int32) (*models.Item, error) {
 func (m *mapDB) DeleteItem(ID int32) error {
 	delete(m.db, ID)
 	return nil
+}
+
+func (m *mapDB) UpdateItem(item *models.Item) (*models.Item, error) {
+	_, ok := m.db[item.ID]
+	if !ok {
+		return nil, fmt.Errorf("Item with ID: %d is not found", item.ID)
+	}
+	m.db[item.ID] = item
+	return item, nil
 }
