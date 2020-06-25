@@ -27,9 +27,20 @@ func NewMapDB() Repository {
 
 func (m *mapDB) CreateItem(item *models.Item) (*models.Item, error) {
 	m.maxID++
-	item.ID = m.maxID
-	m.db[item.ID] = item
-	return m.db[item.ID], nil
+
+	newItem := &models.Item{
+		ID:    m.maxID,
+		Price: item.Price,
+		Name:  item.Name,
+	}
+
+	m.db[newItem.ID] = newItem
+
+	return &models.Item{
+		ID:    newItem.ID,
+		Name:  newItem.Name,
+		Price: newItem.Price,
+	}, nil
 }
 
 func (m *mapDB) GetItem(ID int32) (*models.Item, error) {
@@ -37,7 +48,12 @@ func (m *mapDB) GetItem(ID int32) (*models.Item, error) {
 	if !ok {
 		return nil, fmt.Errorf("Item with ID: %d is not found", ID)
 	}
-	return item, nil
+
+	return &models.Item{
+		ID:    item.ID,
+		Name:  item.Name,
+		Price: item.Price,
+	}, nil
 }
 
 func (m *mapDB) DeleteItem(ID int32) error {
@@ -46,10 +62,16 @@ func (m *mapDB) DeleteItem(ID int32) error {
 }
 
 func (m *mapDB) UpdateItem(item *models.Item) (*models.Item, error) {
-	_, ok := m.db[item.ID]
+	updateItem, ok := m.db[item.ID]
 	if !ok {
 		return nil, fmt.Errorf("Item with ID: %d is not found", item.ID)
 	}
-	m.db[item.ID] = item
-	return item, nil
+	updateItem.Name = item.Name
+	updateItem.Price = item.Price
+
+	return &models.Item{
+		ID:    updateItem.ID,
+		Name:  updateItem.Name,
+		Price: updateItem.Price,
+	}, nil
 }

@@ -97,17 +97,9 @@ func (s *shopHandler) updateItemHandler(w http.ResponseWriter, r *http.Request) 
 		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
 		return
 	}
-	item, err := s.db.GetItem(int32(itemID))
-	if err != nil {
-		log.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
-		return
-	}
+	updatedItem.ID = int32(itemID)
 
-	item.Name = updatedItem.Name
-	item.Price = updatedItem.Price
-
-	item, err = s.db.UpdateItem(item)
+	item, err := s.db.UpdateItem(updatedItem)
 	if err != nil {
 		log.Println(err)
 		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
