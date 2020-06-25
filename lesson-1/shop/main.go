@@ -1,11 +1,11 @@
 package main
 
 import (
+	"./repository"
 	"flag"
 	"log"
 	"net/http"
 	"os"
-	"shop/repository"
 	"time"
 
 	"github.com/gorilla/mux"
