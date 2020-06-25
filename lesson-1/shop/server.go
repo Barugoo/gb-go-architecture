@@ -1,9 +1,9 @@
 package main
 
 import (
-	"./models"
 	"./repository"
 	"encoding/json"
+	"github.com/kaatinga/testModel"
 	"log"
 	"net/http"
 	"strconv"

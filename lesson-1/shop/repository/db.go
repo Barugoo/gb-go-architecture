@@ -3,7 +3,7 @@ package repository
 import (
 	"fmt"
 
-	"../models"
+	"github.com/kaatinga/testModel"
 )
 
 type Repository interface {
@@ -27,9 +27,20 @@ func NewMapDB() Repository {
 
 func (m *mapDB) CreateItem(item *models.Item) (*models.Item, error) {
 	m.maxID++
-	item.ID = m.maxID
-	m.db[item.ID] = item
-	return m.db[item.ID], nil
+
+	newItem := &models.Item{
+		ID:    m.maxID,
+		Price: item.Price,
+		Name:  item.Name,
+	}
+
+	m.db[newItem.ID] = newItem
+
+	return &models.Item{
+		ID:    newItem.ID,
+		Name:  newItem.Name,
+		Price: newItem.Price,
+	}, nil
 }
 
 func (m *mapDB) GetItem(ID int32) (*models.Item, error) {
