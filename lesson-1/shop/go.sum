@@ -1,2 +1,4 @@
 github.com/gorilla/mux v1.7.4 h1:VuZ8uybHlWmqV03+zRzdwKL4tUnIp1MAQtp1mIFE1bc=
 github.com/gorilla/mux v1.7.4/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
+github.com/kaatinga/testModel v0.0.0-20200625175744-16e5c1c7b7e3 h1:6/zj96PULgcJlYqFjATtomsLoniw+pPFxmk7aTxZh7w=
+github.com/kaatinga/testModel v0.0.0-20200625175744-16e5c1c7b7e3/go.mod h1:2eExbP6nETJ3Dz+cJA+UyoT0QUqF+qVABEiJud225yw=
