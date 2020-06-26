@@ -2,17 +2,81 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"shop/models"
 	"shop/repository"
+	"shop/tools/tgbot"
 	"strconv"
 
 	"github.com/gorilla/mux"
 )
 
 type shopHandler struct {
-	db repository.Repository
+	db  repository.Repository
+	bot *tgbot.ShopTgBot
+}
+
+func (s *shopHandler) createOrderHandler(w http.ResponseWriter, r *http.Request) {
+	order := new(models.Order)
+	err := json.NewDecoder(r.Body).Decode(order)
+	if err != nil {
+		log.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		return
+	}
+
+	for _, itemID := range order.ItemIDs {
+		_, err := s.db.GetItem(int32(itemID))
+		if err != nil {
+			log.Println(err)
+			json.NewEncoder(w).Encode(map[string]string{
+				"status":  "not found",
+				"message": fmt.Sprintf("item with ID %d not found", itemID),
+			})
+			return
+		}
+	}
+
+	err = s.bot.SendOrderNotification(order)
+	if err != nil {
+		log.Println(err)
+	}
+
+	order, err = s.db.CreateOrder(order)
+	if err != nil {
+		log.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		return
+	}
+	json.NewEncoder(w).Encode(map[string]bool{"ok": true})
+}
+
+func (s *shopHandler) getOrderHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+
+	orderID, err := strconv.Atoi(idStr)
+	if err != nil {
+		log.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		return
+	}
+
+	order, err := s.db.GetOrder(int32(orderID))
+	if err != nil {
+		log.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(order)
+	if err != nil {
+		log.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		return
+	}
 }
 
 func (s *shopHandler) createItemHandler(w http.ResponseWriter, r *http.Request) {

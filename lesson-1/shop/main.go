@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"shop/repository"
+	"shop/tools/tgbot"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -19,8 +21,27 @@ func main() {
 	if !ok {
 		log.Fatal("WEB_SERVER_ADDR env not set")
 	}
+	tgBotToken, ok := os.LookupEnv("TG_BOT_TOKEN")
+	if !ok {
+		log.Fatal("WEB_SERVER_ADDR env not set")
+	}
+	tgChatID, ok := os.LookupEnv("TG_CHAT_ID")
+	if !ok {
+		log.Fatal("WEB_SERVER_ADDR env not set")
+	}
+	chatID, err := strconv.ParseInt(tgChatID, 10, 64)
+	if err != nil {
+		log.Fatal("Unable to parse chat ID")
+	}
 
-	handler := &shopHandler{}
+	bot, err := tgbot.NewShopTgBot(tgBotToken, chatID)
+	if err != nil {
+		log.Fatal("Unable to init tg bot")
+	}
+
+	handler := &shopHandler{
+		bot: bot,
+	}
 	if *isDebug {
 		handler.db = repository.NewMapDB()
 	}
@@ -32,16 +53,18 @@ func main() {
 	router.HandleFunc("/item/{id}", handler.deleteItemHandler).Methods("DELETE")
 	router.HandleFunc("/item/{id}", handler.updateItemHandler).Methods("PUT")
 
+	router.HandleFunc("/order", handler.createOrderHandler).Methods("POST")
+	router.HandleFunc("/order/{id}", handler.getOrderHandler).Methods("GET")
+
 	srv := &http.Server{
-		Addr: webAddr,
-		// Good practice to set timeouts to avoid Slowloris attacks.
+		Addr:         webAddr,
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
-		Handler:      router, // Pass our instance of gorilla/mux in.
+		Handler:      router,
 	}
 
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)
 	}
