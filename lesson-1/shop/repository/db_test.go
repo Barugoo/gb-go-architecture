@@ -23,10 +23,10 @@ func TestNewMapDB(t *testing.T) {
 	}
 }
 
-func Test_mapDB_CreateItem(t *testing.T) {
+func TestMapDBCreateItem(t *testing.T) {
 
-	var inputItem models.Item
-	outputItem := models.Item{ID: 1}
+	inputItem := models.Item{ID: 1, Name: "TestName", Price: 100}
+	outputItem := inputItem
 
 	tests := []struct {
 		name    string
@@ -42,6 +42,8 @@ func Test_mapDB_CreateItem(t *testing.T) {
 
 			m := &tt.object
 
+			previousID := tt.object.maxID
+
 			got, err := m.CreateItem(tt.arg)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("CreateItem() error = %v, wantErr %v", err, tt.wantErr)
@@ -50,6 +52,14 @@ func Test_mapDB_CreateItem(t *testing.T) {
 
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("CreateItem() got = %v, want %v", got, tt.want)
+			}
+
+			if !(tt.object.maxID == previousID+1) {
+				t.Errorf("ArrayMaxID is %v, but must be %v", tt.object.maxID, previousID+1)
+			}
+
+			if !reflect.DeepEqual(inputItem, *tt.object.db[inputItem.ID]) {
+				t.Errorf("CreateItem() received = %v, but has %v", inputItem, tt.object.db[inputItem.ID])
 			}
 		})
 	}
@@ -119,7 +129,7 @@ func Test_mapDB_CreateItem(t *testing.T) {
 //	}
 //}
 //
-func Test_mapDB_UpdateItem(t *testing.T) {
+func TestMapDBUpdateItem(t *testing.T) {
 
 	var testItem models.Item
 	testItem.ID = 1
