@@ -3,7 +3,7 @@ package repository
 import (
 	"fmt"
 
-	"shop/models"
+	"github.com/kaatinga/testModel"
 )
 
 type Repository interface {

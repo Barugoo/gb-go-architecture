@@ -1,13 +1,20 @@
 package main
 
 import (
+	"./repository"
 	"encoding/json"
+<<<<<<< HEAD
 	"fmt"
 	"log"
 	"net/http"
 	"shop/models"
 	"shop/repository"
 	"shop/tools/tgbot"
+=======
+	"github.com/kaatinga/testModel"
+	"log"
+	"net/http"
+>>>>>>> origin/master
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -84,17 +91,26 @@ func (s *shopHandler) createItemHandler(w http.ResponseWriter, r *http.Request) 
 	err := json.NewDecoder(r.Body).Decode(item)
 	if err != nil {
 		log.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		err = json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		if err != nil {
+			log.Println(err)
+		}
 		return
 	}
 
 	item, err = s.db.CreateItem(item)
 	if err != nil {
 		log.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		err = json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		if err != nil {
+			log.Println(err)
+		}
 		return
 	}
-	json.NewEncoder(w).Encode(map[string]bool{"ok": true})
+	err = json.NewEncoder(w).Encode(map[string]bool{"ok": true})
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func (s *shopHandler) getItemHandler(w http.ResponseWriter, r *http.Request) {
@@ -104,21 +120,30 @@ func (s *shopHandler) getItemHandler(w http.ResponseWriter, r *http.Request) {
 	itemID, err := strconv.Atoi(idStr)
 	if err != nil {
 		log.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		err = json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		if err != nil {
+			log.Println(err)
+		}
 		return
 	}
 
 	item, err := s.db.GetItem(int32(itemID))
 	if err != nil {
 		log.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		err = json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		if err != nil {
+			log.Println(err)
+		}
 		return
 	}
 
 	err = json.NewEncoder(w).Encode(item)
 	if err != nil {
 		log.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		err = json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		if err != nil {
+			log.Println(err)
+		}
 		return
 	}
 }
@@ -130,17 +155,26 @@ func (s *shopHandler) deleteItemHandler(w http.ResponseWriter, r *http.Request) 
 	itemID, err := strconv.Atoi(idStr)
 	if err != nil {
 		log.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		err = json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		if err != nil {
+			log.Println(err)
+		}
 		return
 	}
 
 	err = s.db.DeleteItem(int32(itemID))
 	if err != nil {
 		log.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		err = json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		if err != nil {
+			log.Println(err)
+		}
 		return
 	}
-	json.NewEncoder(w).Encode(map[string]bool{"ok": true})
+	err = json.NewEncoder(w).Encode(map[string]bool{"ok": true})
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func (s *shopHandler) updateItemHandler(w http.ResponseWriter, r *http.Request) {
@@ -148,32 +182,58 @@ func (s *shopHandler) updateItemHandler(w http.ResponseWriter, r *http.Request) 
 	err := json.NewDecoder(r.Body).Decode(updatedItem)
 	if err != nil {
 		log.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		err = json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		if err != nil {
+			log.Println(err)
+		}
 		return
 	}
 
 	vars := mux.Vars(r)
 	itemIDStr := vars["id"]
 
-	itemID, err := strconv.Atoi(itemIDStr)
+	var itemID int
+	itemID, err = strconv.Atoi(itemIDStr)
 	if err != nil {
 		log.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		err = json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		if err != nil {
+			log.Println(err)
+		}
 		return
 	}
-	updatedItem.ID = int32(itemID)
 
-	item, err := s.db.UpdateItem(updatedItem)
+	var item *models.Item
+	item, err = s.db.GetItem(int32(itemID))
 	if err != nil {
 		log.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		err = json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		if err != nil {
+			log.Println(err)
+		}
+		return
+	}
+
+	item.Name = updatedItem.Name
+	item.Price = updatedItem.Price
+
+	item, err = s.db.UpdateItem(item)
+	if err != nil {
+		log.Println(err)
+		err = json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		if err != nil {
+			log.Println(err)
+		}
 		return
 	}
 
 	err = json.NewEncoder(w).Encode(item)
 	if err != nil {
 		log.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		err = json.NewEncoder(w).Encode(map[string]bool{"ok": false})
+		if err != nil {
+			log.Println(err)
+		}
 		return
 	}
 }
