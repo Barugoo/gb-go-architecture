@@ -3,7 +3,7 @@ package repository
 import (
 	"fmt"
 
-	"github.com/kaatinga/testModel"
+	"shop/models"
 )
 
 type Repository interface {
@@ -11,30 +11,49 @@ type Repository interface {
 	GetItem(ID int32) (*models.Item, error)
 	DeleteItem(ID int32) error
 	UpdateItem(item *models.Item) (*models.Item, error)
+
+	CreateOrder(Order *models.Order) (*models.Order, error)
+	GetOrder(ID int32) (*models.Order, error)
 }
 
 type mapDB struct {
-	db    map[int32]*models.Item
+	itemsTable  *itemsTable
+	ordersTable *ordersTable
+}
+
+type itemsTable struct {
+	items map[int32]*models.Item
 	maxID int32
+}
+
+type ordersTable struct {
+	orders map[int32]*models.Order
+	maxID  int32
 }
 
 func NewMapDB() Repository {
 	return &mapDB{
-		db:    make(map[int32]*models.Item),
-		maxID: 0,
+		itemsTable: &itemsTable{
+			items: make(map[int32]*models.Item),
+			maxID: 0,
+		},
+		ordersTable: &ordersTable{
+			orders: make(map[int32]*models.Order),
+			maxID:  0,
+		},
 	}
 }
 
 func (m *mapDB) CreateItem(item *models.Item) (*models.Item, error) {
-	m.maxID++
+	m.itemsTable.maxID++
 
 	newItem := &models.Item{
-		ID:    m.maxID,
+		ID:    m.itemsTable.maxID,
 		Price: item.Price,
 		Name:  item.Name,
 	}
 
-	m.db[newItem.ID] = newItem
+	m.itemsTable.items[newItem.ID] = newItem
 
 	return &models.Item{
 		ID:    newItem.ID,
@@ -44,23 +63,65 @@ func (m *mapDB) CreateItem(item *models.Item) (*models.Item, error) {
 }
 
 func (m *mapDB) GetItem(ID int32) (*models.Item, error) {
-	item, ok := m.db[ID]
+	item, ok := m.itemsTable.items[ID]
 	if !ok {
 		return nil, fmt.Errorf("Item with ID: %d is not found", ID)
 	}
-	return item, nil
+
+	return &models.Item{
+		ID:    item.ID,
+		Name:  item.Name,
+		Price: item.Price,
+	}, nil
 }
 
 func (m *mapDB) DeleteItem(ID int32) error {
-	delete(m.db, ID)
+	delete(m.itemsTable.items, ID)
 	return nil
 }
 
 func (m *mapDB) UpdateItem(item *models.Item) (*models.Item, error) {
-	_, ok := m.db[item.ID]
+	updateItem, ok := m.itemsTable.items[item.ID]
 	if !ok {
 		return nil, fmt.Errorf("Item with ID: %d is not found", item.ID)
 	}
-	m.db[item.ID] = item
-	return item, nil
+	updateItem.Name = item.Name
+	updateItem.Price = item.Price
+
+	return &models.Item{
+		ID:    updateItem.ID,
+		Name:  updateItem.Name,
+		Price: updateItem.Price,
+	}, nil
+}
+
+func (m *mapDB) CreateOrder(order *models.Order) (*models.Order, error) {
+	m.ordersTable.maxID++
+
+	newOrder := &models.Order{
+		ID:      m.ordersTable.maxID,
+		Phone:   order.Phone,
+		ItemIDs: order.ItemIDs,
+	}
+
+	m.ordersTable.orders[newOrder.ID] = newOrder
+
+	return &models.Order{
+		ID:      newOrder.ID,
+		Phone:   newOrder.Phone,
+		ItemIDs: newOrder.ItemIDs,
+	}, nil
+}
+
+func (m *mapDB) GetOrder(ID int32) (*models.Order, error) {
+	order, ok := m.ordersTable.orders[ID]
+	if !ok {
+		return nil, fmt.Errorf("Order with ID: %d is not found", ID)
+	}
+
+	return &models.Order{
+		ID:      order.ID,
+		Phone:   order.Phone,
+		ItemIDs: order.ItemIDs,
+	}, nil
 }
