@@ -102,6 +102,7 @@ func (m *mapDB) CreateOrder(order *models.Order) (*models.Order, error) {
 		ID:      m.ordersTable.maxID,
 		Phone:   order.Phone,
 		ItemIDs: order.ItemIDs,
+		Mail:    order.Mail,
 	}
 
 	m.ordersTable.orders[newOrder.ID] = newOrder
@@ -110,6 +111,7 @@ func (m *mapDB) CreateOrder(order *models.Order) (*models.Order, error) {
 		ID:      newOrder.ID,
 		Phone:   newOrder.Phone,
 		ItemIDs: newOrder.ItemIDs,
+		Mail:    newOrder.Mail,
 	}, nil
 }
 
@@ -123,5 +125,6 @@ func (m *mapDB) GetOrder(ID int32) (*models.Order, error) {
 		ID:      order.ID,
 		Phone:   order.Phone,
 		ItemIDs: order.ItemIDs,
+		Mail:    order.Mail,
 	}, nil
 }

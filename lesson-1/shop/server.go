@@ -8,14 +8,16 @@ import (
 	"shop/models"
 	"shop/repository"
 	"shop/tools/tgbot"
+	"shop/utils/sendmail"
 	"strconv"
 
 	"github.com/gorilla/mux"
 )
 
 type shopHandler struct {
-	db  repository.Repository
-	bot *tgbot.ShopTgBot
+	db   repository.Repository
+	bot  *tgbot.ShopTgBot
+	mail *sendmail.Sendmail
 }
 
 func (s *shopHandler) createOrderHandler(w http.ResponseWriter, r *http.Request) {
@@ -40,6 +42,11 @@ func (s *shopHandler) createOrderHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	err = s.bot.SendOrderNotification(order)
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = s.mail.Send(order.Mail, "Some order infromation to client")
 	if err != nil {
 		log.Println(err)
 	}
