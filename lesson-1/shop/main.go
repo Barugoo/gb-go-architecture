@@ -39,6 +39,7 @@ func main() {
 	srv := &http.Server{
 		Addr: webAddr,
 		// Good practice to set timeouts to avoid Slowloris attacks.
+		//
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
