@@ -73,15 +73,16 @@ func main() {
 	var url string
 	var workerCount int
 	var jobCount int
-	var leadTime time.Duration
+	//	var leadTime time.Duration
 	var httpMethod string
-	var bodyReques []byte
+	var bodyReques string
 
 	flag.StringVar(&url, "url", "https://yandex.ru", "URL сайта")
 	flag.IntVar(&workerCount, "t", 5, "number of threads")
 	flag.IntVar(&jobCount, "r", 5, "number of requests")
-	flag.DurationVar(&leadTime, "t", 0, "lead time")
+	//	flag.DurationVar(&leadTime, "t", 0, "lead time")
 	flag.StringVar(&httpMethod, "m", "GET", "method GET or POST")
+	flag.StringVar(&bodyReques, "b", "", "Body for post request")
 
 	flag.Parse()
 
@@ -97,15 +98,15 @@ func main() {
 		panic("Колличество запросов должно быть больше 0")
 	}
 
-	if leadTime < 0 {
-		panic("Время не может быть отрицательное")
-	}
+	//	if leadTime < 0 {
+	//		panic("Время не может быть отрицательное")
+	//	}
 
 	jobs := make(chan int, jobCount)
 	results := make(chan int, jobCount)
 
 	for w := 0; w < workerCount; w++ {
-		go worker(w, url, jobs, results, httpMethod, bodyReques)
+		go worker(w, url, jobs, results, httpMethod, []byte(bodyReques))
 	}
 
 	for j := 0; j < jobCount; j++ {
@@ -117,8 +118,9 @@ func main() {
 		<-results
 	}
 
-	rpc := timeAll / goodResp
+	avg := timeAll / goodResp
+	rpc := goodResp / timeAll
 
 	fmt.Println("RPC: ", rpc)
-
+	fmt.Println("AVG time: ", avg)
 }
