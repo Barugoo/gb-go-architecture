@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 )
 
@@ -23,12 +24,23 @@ func Search(a []int, search int) (result int, count int) {
 
 func main() {
 
-	searchArray := []int{1, 4, 8, 13, 18, 21, 29, 69, 77, 99}
+	var num int
 
-	fmt.Printf("Масив: %v\n", searchArray)
-	for _, num := range searchArray {
-		result, count := Search(searchArray, num)
-		fmt.Printf("Число %d, находится в масиве под индексом %d, поиск произведен за %d шага\n", num, result, count)
-	}
+	searchArray0 := []int{10, 20, 30, 40, 50}
+	searchArray1 := []int{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}
+	searchArray2 := []int{10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150}
+	searchArray3 := []int{10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200}
 
+	flag.IntVar(&num, "n", 10, "Search number")
+
+	fmt.Printf("Поиск числа %d\n", num)
+
+	result, count := Search(searchArray0, num)
+	fmt.Printf("Число %d, находится в масиве searchArray0 под индексом %d, поиск произведен за %d шага\n", num, result, count)
+	result, count = Search(searchArray1, num)
+	fmt.Printf("Число %d, находится в масиве searchArray1 под индексом %d, поиск произведен за %d шага\n", num, result, count)
+	result, count = Search(searchArray2, num)
+	fmt.Printf("Число %d, находится в масиве searchArray2 под индексом %d, поиск произведен за %d шага\n", num, result, count)
+	result, count = Search(searchArray3, num)
+	fmt.Printf("Число %d, находится в масиве searchArray3 под индексом %d, поиск произведен за %d шага\n", num, result, count)
 }
