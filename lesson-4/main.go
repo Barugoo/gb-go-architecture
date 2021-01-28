@@ -3,9 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/guptarohit/asciigraph"
 )
 
-func Search(a []int, search int) (result int, count int) {
+func Search(a []int, search int) (result int, count float64) {
 	mid := len(a) / 2
 	switch {
 	case len(a) == 0:
@@ -25,6 +26,7 @@ func Search(a []int, search int) (result int, count int) {
 func main() {
 
 	var num int
+	var counts []float64
 
 	searchArray0 := []int{10, 20, 30, 40, 50}
 	searchArray1 := []int{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}
@@ -37,12 +39,19 @@ func main() {
 
 	fmt.Printf("Поиск числа %d\n", num)
 
-	result, count := Search(searchArray0, num)
-	fmt.Printf("Число %d, находится в масиве searchArray0 под индексом %d, поиск произведен за %d шага\n", num, result, count)
-	result, count = Search(searchArray1, num)
-	fmt.Printf("Число %d, находится в масиве searchArray1 под индексом %d, поиск произведен за %d шага\n", num, result, count)
-	result, count = Search(searchArray2, num)
-	fmt.Printf("Число %d, находится в масиве searchArray2 под индексом %d, поиск произведен за %d шага\n", num, result, count)
-	result, count = Search(searchArray3, num)
-	fmt.Printf("Число %d, находится в масиве searchArray3 под индексом %d, поиск произведен за %d шага\n", num, result, count)
+	_, count := Search(searchArray0, num)
+	counts = append(counts, count)
+
+	_, count = Search(searchArray1, num)
+	counts = append(counts, count)
+
+	_, count = Search(searchArray2, num)
+	counts = append(counts, count)
+
+	_, count = Search(searchArray3, num)
+	counts = append(counts, count)
+
+	graph := asciigraph.Plot(counts)
+
+	fmt.Println(graph)
 }
