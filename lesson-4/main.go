@@ -31,7 +31,9 @@ func main() {
 	searchArray2 := []int{10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150}
 	searchArray3 := []int{10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200}
 
-	flag.IntVar(&num, "n", 10, "Search number")
+	flag.IntVar(&num, "n", 0, "Search number")
+
+	flag.Parse()
 
 	fmt.Printf("Поиск числа %d\n", num)
 
