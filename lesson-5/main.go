@@ -17,9 +17,11 @@ type List struct {
 	tail  *Node
 }
 
-func (l *List) FindPrevNode(node *Node) *Node {
+func (l *List) Print() {
+	for tmp, i := l.head, l.count; i > 0; tmp, i = tmp.next, i-1 {
+		fmt.Printf("Value %d, Prev: %v, Next: %v \n", tmp.value, tmp.prev, tmp.next)
+	}
 
-	return nil
 }
 
 func (l *List) PushBack(node *Node) {
@@ -52,13 +54,6 @@ func (l *List) PushFront(node *Node) {
 	node.next = prev
 	prev.prev = node
 	l.head = node
-
-}
-
-func (l *List) Print() {
-	for tmp := l.head; tmp.next != nil; tmp = tmp.next {
-		fmt.Printf("Value %d, Prev: %v, Next: %v \n", tmp.value, tmp.prev, tmp.next)
-	}
 
 }
 
