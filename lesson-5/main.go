@@ -73,7 +73,7 @@ func (l *List) PopBack() {
 
 func (l *List) PopFront() {
 	if l.count <= 0 {
-		log.Fatal("PopBack() called on empty queue")
+		log.Fatal("PopFront() called on empty queue")
 	}
 
 	del := l.head
