@@ -67,6 +67,7 @@ func (l *List) PopBack() {
 	node := del.prev
 	node.next = nil
 	del.prev = nil
+	l.tail = node
 	l.count--
 }
 
@@ -75,10 +76,12 @@ func (l *List) PopFront() {
 		log.Fatal("PopBack() called on empty queue")
 	}
 
+	del := l.head
 	head := l.head.next
 
 	head.prev = nil
-	//del.next = nil
+	del.next = nil
+	l.head = head
 	l.count--
 }
 
