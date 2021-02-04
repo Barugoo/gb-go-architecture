@@ -3,24 +3,36 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 
+	"shop/pkg/sendmail"
 	"shop/pkg/tgbot"
 	"shop/repository"
 	"shop/service"
 )
 
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Print("No .env file found")
+	}
+}
+
 func main() {
-	tg, err := tgbot.NewTelegramAPI("1561350817:AAH5bkKOgg9MRqAJLV-QTRFzIbrSUnjWoK8", -432234189)
+
+	tg, err := tgbot.NewTelegramAPI("1538307948:AAEJSbHwgf2AVz0bdCWzKH8cC6cT56lDBaA", 201882409)
 	if err != nil {
 		log.Fatal("Unable to init telegram bot")
 	}
 
+	sm := sendmail.NewSentMail(os.Getenv("FROM_EMAIL"), os.Getenv("HOST_EMAIL"), os.Getenv("PASSWORD_EMAIL"))
+
 	db := repository.NewMapDB()
 
-	service := service.NewService(tg, db)
+	service := service.NewService(tg, db, sm)
 	handler := &shopHandler{
 		service: service,
 		db:      db,
