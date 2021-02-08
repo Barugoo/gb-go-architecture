@@ -8,4 +8,5 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	gopkg.in/yaml.v2 v2.3.0
+	./models
 )

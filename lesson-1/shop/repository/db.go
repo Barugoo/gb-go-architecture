@@ -3,7 +3,7 @@ package repository
 import (
 	"fmt"
 
-	"shop/models"
+	"gb/lesson-1/shop/models"
 )
 
 type Repository interface {
