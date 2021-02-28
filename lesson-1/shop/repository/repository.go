@@ -75,15 +75,24 @@ func (m *mapDB) ListItems(filter *ItemFilter) ([]*models.Item, error) {
 		return itemSlice[i].ID < itemSlice[j].ID
 	})
 
-	for _, item := range itemSlice {
-		if filter.PriceLeft == nil && filter.PriceRight == nil {
-			res = itemSlice
-			break
-		}
-		if filter.PriceLeft != nil && item.Price >= *filter.PriceLeft ||
-			filter.PriceRight != nil && item.Price >= *filter.PriceLeft {
-
-			res = append(res, item)
+	if filter.PriceLeft == nil && filter.PriceRight == nil {
+		res = itemSlice
+	} else {
+		for _, item := range itemSlice {
+			switch {
+			case filter.PriceLeft != nil && filter.PriceRight == nil:
+				if item.Price >= *filter.PriceLeft {
+					res = append(res, item)
+				}
+			case filter.PriceRight != nil && filter.PriceLeft == nil:
+				if item.Price <= *filter.PriceRight {
+					res = append(res, item)
+				}
+			case filter.PriceRight != nil && filter.PriceLeft != nil:
+				if item.Price <= *filter.PriceRight && item.Price >= *filter.PriceLeft {
+					res = append(res, item)
+				}
+			}
 		}
 	}
 
